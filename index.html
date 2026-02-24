@@ -15,26 +15,35 @@ body {
 }
 
 /* Header */
-.header { text-align: center; margin-bottom: 10px; }
-.subtitle { font-size: 18px; color: #666; }
+.header { text-align: center; margin-bottom: 10px; 
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+
+}
+.subtitle { font-size: 18px; color: #666; 
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 .main-title { font-size: 32px; font-weight: bold; margin: 2px 0 10px 0; color: #333; }
 
 /* Tabs */
-#tabs { display: flex; align-items: center; margin-bottom: 10px; width: 100%; max-width: 90vw; overflow: hidden; }
+#tabs { display: flex; align-items: center; margin-bottom: 10px; width: 100%; max-width: 800px; overflow: hidden; }
 .tab {
   position: relative;
   flex-grow: 1; flex-basis: 0;
   text-align: center;
   padding: 6px 12px;
   background: #ddd;
-  border-radius: 6px 6px 0 0;
+  border-radius: 6px 6px 6px 6px;
+  border: 1px solid #ccc;
   cursor: pointer;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  margin: 1px;
   transition: background 0.2s;
+  height: 18px;
 }
-.tab.active { background: #fff; font-weight: bold; border-bottom: 2px solid #fff; }
+.tab.active { background: #fff; font-weight: bold;  }
 .tab .close-btn {
   display: none;
   position: absolute; top: 50%; right: 6px;
@@ -49,7 +58,7 @@ body {
 }
 .tab:hover .close-btn { display: inline-block; }
 
-#add-tab { padding: 6px 12px; background: #bbb; border-radius: 6px; cursor: pointer; }
+#add-tab { padding: 6px 12px; height: 20px; background: #bbb; border-radius: 6px; cursor: pointer; }
 
 /* Upload container */
 #upload-container {
