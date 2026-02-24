@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Merlin & Kristinas fancy plaque marker</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background: #f5f5f5;
+  }
+
+  /* Header styles */
+  .header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .subtitle {
+    font-size: 18px;
+    color: #666;
+  }
+  .main-title {
+    font-size: 32px;
+    font-weight: bold;
+    margin: 5px 0 0 0;
+    color: #333;
+  }
+
+  #upload-container {
+    margin-bottom: 20px;
+    width: 90vw;
+    max-width: 600px;
+    text-align: center;
+    padding: 20px;
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    background: #fafafa;
+    transition: background 0.2s, border-color 0.2s;
+    cursor: pointer;
+  }
+
+  #upload-container.dragover {
+    background: #e0f7fa;
+    border-color: #00acc1;
+  }
+
+  #image-container {
+    position: relative;
+    border: 2px solid #ccc;
+    max-width: 90vw;
+    max-height: 70vh;
+    background: #fff;
+    overflow: hidden;
+  }
+
+  #image-container img {
+    display: block;
+    max-width: 100%;
+    max-height: 70vh;
+    cursor: crosshair;
+  }
+
+  #counter {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    z-index: 10;
+  }
+
+  .marker {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: red;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: auto;
+    border: 1px solid white;
+    transition: transform 0.1s, border-color 0.1s;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="subtitle">Merlin's and Kristina's</div>
+  <div class="main-title">Fancy Plaque Marker</div>
+</div>
+
+<div id="upload-container">
+  Click or drag & drop an image here (JPG/JPEG)
+  <input type="file" id="image-upload" accept="image/jpeg,image/jpg" style="display:none;">
+</div>
+
+<div id="image-container">
+  <div id="counter">Plaques: 0</div>
+</div>
+
+<script>
+const imageContainer = document.getElementById('image-container');
+const uploadContainer = document.getElementById('upload-container');
+const uploadInput = document.getElementById('image-upload');
+const counter = document.getElementById('counter');
+
+let image = null;
+let markers = [];
+let activeIndex = null;
+let currentFilename = "";
+
+// Load from localStorage
+window.addEventListener('load', () => {
+  const savedImage = localStorage.getItem('imageData');
+  const savedMarkers = JSON.parse(localStorage.getItem('markers') || '[]');
+  const savedFilename = localStorage.getItem('filename') || "";
+
+  if (savedImage) {
+    currentFilename = savedFilename;
+    loadImage(savedImage, savedMarkers);
+  }
+});
+
+// File input
+uploadContainer.addEventListener('click', () => uploadInput.click());
+
+uploadInput.addEventListener('change', e => {
+  if (!e.target.files[0]) return;
+  handleFile(e.target.files[0]);
+});
+
+// Drag & drop
+uploadContainer.addEventListener('dragover', e => {
+  e.preventDefault();
+  uploadContainer.classList.add('dragover');
+});
+
+uploadContainer.addEventListener('dragleave', e => {
+  e.preventDefault();
+  uploadContainer.classList.remove('dragover');
+});
+
+uploadContainer.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadContainer.classList.remove('dragover');
+  if (!e.dataTransfer.files[0]) return;
+  handleFile(e.dataTransfer.files[0]);
+});
+
+function handleFile(file) {
+  if (!file.type.startsWith('image/jpeg')) return alert('Only JPG/JPEG images are supported.');
+  currentFilename = file.name;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const dataUrl = e.target.result;
+    loadImage(dataUrl, []);
+    localStorage.setItem('imageData', dataUrl);
+    localStorage.setItem('filename', currentFilename);
+    localStorage.removeItem('markers');
+  };
+  reader.readAsDataURL(file);
+}
+
+function loadImage(src, savedMarkers) {
+  imageContainer.innerHTML = '';
+  image = document.createElement('img');
+  image.src = src;
+  imageContainer.appendChild(image);
+
+  // Add counter on top
+  imageContainer.appendChild(counter);
+
+  markers = savedMarkers || [];
+  markers.forEach(m => addMarkerToDOM(m));
+  updateCounter();
+}
+
+function getRelativeClick(e) {
+  const rect = image.getBoundingClientRect();
+  const x = ((e.clientX - rect.left) / rect.width).toFixed(4);
+  const y = ((e.clientY - rect.top) / rect.height).toFixed(4);
+  return { x, y };
+}
+
+// Add marker
+imageContainer.addEventListener('click', e => {
+  if (!image) return;
+  if (e.target.classList.contains('marker')) return;
+
+  const { x, y } = getRelativeClick(e);
+  if (markers.some(m => m.x === x && m.y === y)) return;
+
+  const marker = { x, y };
+  markers.push(marker);
+  addMarkerToDOM(marker);
+  updateCounter();
+  saveMarkers();
+});
+
+function addMarkerToDOM(marker) {
+  const dot = document.createElement('div');
+  dot.classList.add('marker');
+  dot.style.left = `${marker.x * 100}%`;
+  dot.style.top = `${marker.y * 100}%`;
+
+  dot.addEventListener('click', e => {
+    e.stopPropagation();
+    const index = markers.indexOf(marker);
+    setActive(index);
+  });
+
+  imageContainer.appendChild(dot);
+}
+
+function setActive(index) {
+  activeIndex = index;
+  const dots = document.querySelectorAll('.marker');
+  dots.forEach((dot, i) => {
+    dot.style.border = i === index ? '1px solid yellow' : '1px solid white';
+    dot.style.transform = i === index ? 'translate(-50%, -50%) scale(2)' : 'translate(-50%, -50%) scale(1)';
+  });
+}
+
+// Delete selected marker with DEL or Backspace
+document.addEventListener('keydown', e => {
+  if ((e.key === 'Delete' || e.key === 'Backspace') && activeIndex !== null) {
+    markers.splice(activeIndex, 1);
+    refreshMarkers();
+  }
+});
+
+function refreshMarkers() {
+  imageContainer.querySelectorAll('.marker').forEach(dot => dot.remove());
+  markers.forEach(m => addMarkerToDOM(m));
+  activeIndex = null;
+  updateCounter();
+  saveMarkers();
+}
+
+function updateCounter() {
+  const name = currentFilename ? ` | ${currentFilename}` : "";
+  counter.textContent = `Plaques: ${markers.length}${name}`;
+}
+
+function saveMarkers() {
+  localStorage.setItem('markers', JSON.stringify(markers));
+}
+</script>
+</body>
+</html>
