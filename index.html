@@ -77,6 +77,12 @@
     z-index: 10;
   }
 
+  #filename {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #333;
+  }
+
   .marker {
     position: absolute;
     width: 4px;
@@ -106,11 +112,14 @@
   <div id="counter">Plaques: 0</div>
 </div>
 
+<div id="filename"></div>
+
 <script>
 const imageContainer = document.getElementById('image-container');
 const uploadContainer = document.getElementById('upload-container');
 const uploadInput = document.getElementById('image-upload');
 const counter = document.getElementById('counter');
+const filenameDisplay = document.getElementById('filename');
 
 let image = null;
 let markers = [];
@@ -175,12 +184,13 @@ function loadImage(src, savedMarkers) {
   image.src = src;
   imageContainer.appendChild(image);
 
-  // Add counter on top
+  // Re-add counter
   imageContainer.appendChild(counter);
 
   markers = savedMarkers || [];
   markers.forEach(m => addMarkerToDOM(m));
   updateCounter();
+  updateFilename();
 }
 
 function getRelativeClick(e) {
@@ -246,8 +256,11 @@ function refreshMarkers() {
 }
 
 function updateCounter() {
-  const name = currentFilename ? ` | ${currentFilename}` : "";
-  counter.textContent = `Plaques: ${markers.length}${name}`;
+  counter.textContent = `Plaques: ${markers.length}`;
+}
+
+function updateFilename() {
+  filenameDisplay.textContent = currentFilename || "";
 }
 
 function saveMarkers() {
