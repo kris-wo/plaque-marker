@@ -5,95 +5,106 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Merlin & Kristinas fancy plaque marker</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    background: #f5f5f5;
-  }
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background: #f5f5f5;
+}
 
-  /* Header styles */
-  .header {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  .subtitle {
-    font-size: 18px;
-    color: #666;
-  }
-  .main-title {
-    font-size: 32px;
-    font-weight: bold;
-    margin: 5px 0 0 0;
-    color: #333;
-  }
+/* Header */
+.header { text-align: center; margin-bottom: 10px; }
+.subtitle { font-size: 18px; color: #666; }
+.main-title { font-size: 32px; font-weight: bold; margin: 2px 0 10px 0; color: #333; }
 
-  #upload-container {
-    margin-bottom: 20px;
-    width: 90vw;
-    max-width: 600px;
-    text-align: center;
-    padding: 20px;
-    border: 2px dashed #ccc;
-    border-radius: 10px;
-    background: #fafafa;
-    transition: background 0.2s, border-color 0.2s;
-    cursor: pointer;
-  }
+/* Tabs */
+#tabs { display: flex; align-items: center; margin-bottom: 10px; width: 100%; max-width: 90vw; overflow: hidden; }
+.tab {
+  position: relative;
+  flex-grow: 1; flex-basis: 0;
+  text-align: center;
+  padding: 6px 12px;
+  background: #ddd;
+  border-radius: 6px 6px 0 0;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+.tab.active { background: #fff; font-weight: bold; border-bottom: 2px solid #fff; }
+.tab .close-btn {
+  display: none;
+  position: absolute; top: 50%; right: 6px;
+  transform: translateY(-50%);
+  width: 16px; height: 16px; line-height: 16px;
+  text-align: center;
+  border-radius: 50%;
+  background: #a00; color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 12px;
+}
+.tab:hover .close-btn { display: inline-block; }
 
-  #upload-container.dragover {
-    background: #e0f7fa;
-    border-color: #00acc1;
-  }
+#add-tab { padding: 6px 12px; background: #bbb; border-radius: 6px; cursor: pointer; }
 
-  #image-container {
-    position: relative;
-    border: 2px solid #ccc;
-    max-width: 90vw;
-    max-height: 70vh;
-    background: #fff;
-    overflow: hidden;
-  }
+/* Upload container */
+#upload-container {
+  margin-bottom: 10px;
+  width: 90vw; max-width: 600px;
+  text-align: center;
+  padding: 12px;
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  background: #fafafa;
+  transition: background 0.2s, border-color 0.2s;
+  cursor: pointer;
+}
+#upload-container.dragover { background: #e0f7fa; border-color: #00acc1; }
 
-  #image-container img {
-    display: block;
-    max-width: 100%;
-    max-height: 70vh;
-    cursor: crosshair;
-  }
+/* Image container */
+#image-container {
+  position: relative;
+  border: 2px solid #ccc;
+  max-width: 90vw; max-height: 70vh;
+  background: #fff;
+  overflow: hidden;
+}
+#image-container img { display: block; max-width: 100%; max-height: 70vh; cursor: crosshair; }
 
-  #counter {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    background: rgba(0,0,0,0.6);
-    color: white;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: bold;
-    z-index: 10;
-  }
+/* Counter */
+#counter {
+  position: absolute;
+  top: 5px; left: 5px;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  z-index: 10;
+  transition: opacity 0.2s;
+  cursor: crosshair;
+}
+#counter:hover { opacity: 0; }
 
-  #filename {
-    margin-top: 10px;
-    font-size: 16px;
-    color: #333;
-  }
+/* Filename */
+#filename { margin-top: 8px; font-size: 16px; color: #333; }
 
-  .marker {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    background: red;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: auto;
-    border: 1px solid white;
-    transition: transform 0.1s, border-color 0.1s;
-  }
+/* Marker */
+.marker {
+  position: absolute;
+  width: 4px; height: 4px;
+  background: red;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  border: 1px solid white;
+  transition: transform 0.1s, border-color 0.1s;
+}
 </style>
 </head>
 <body>
@@ -102,6 +113,8 @@
   <div class="subtitle">Merlin's and Kristina's</div>
   <div class="main-title">Fancy Plaque Marker</div>
 </div>
+
+<div id="tabs"></div>
 
 <div id="upload-container">
   Click or drag & drop an image here (JPG/JPEG)
@@ -115,157 +128,164 @@
 <div id="filename"></div>
 
 <script>
-const imageContainer = document.getElementById('image-container');
+const tabsContainer = document.getElementById('tabs');
 const uploadContainer = document.getElementById('upload-container');
 const uploadInput = document.getElementById('image-upload');
+const imageContainer = document.getElementById('image-container');
 const counter = document.getElementById('counter');
 const filenameDisplay = document.getElementById('filename');
 
-let image = null;
-let markers = [];
-let activeIndex = null;
-let currentFilename = "";
+let tabs = [];
+let activeTabIndex = 0;
+const MAX_TABS = 10;
+let activeMarkerIndex = null;
 
-// Load from localStorage
+// ------------------- PERSISTENCE -------------------
+function saveTabs() { localStorage.setItem('tabs', JSON.stringify(tabs)); }
+
 window.addEventListener('load', () => {
-  const savedImage = localStorage.getItem('imageData');
-  const savedMarkers = JSON.parse(localStorage.getItem('markers') || '[]');
-  const savedFilename = localStorage.getItem('filename') || "";
+  const savedTabs = JSON.parse(localStorage.getItem('tabs') || '[]');
+  if(savedTabs.length>0) tabs = savedTabs.slice(0, MAX_TABS);
+  else tabs.push({filename:"", imageData:"", markers:[]});
+  activeTabIndex = 0;
+  renderTabs();
+  loadTab(activeTabIndex);
+});
 
-  if (savedImage) {
-    currentFilename = savedFilename;
-    loadImage(savedImage, savedMarkers);
+// ------------------- TABS -------------------
+function renderTabs() {
+  tabsContainer.innerHTML = '';
+  tabs.forEach((tab,index)=>{
+    const div = document.createElement('div');
+    div.classList.add('tab');
+    if(index===activeTabIndex) div.classList.add('active');
+
+    const maxChars = 15;
+    let displayName = tab.filename || "Untitled";
+    if(displayName.length>maxChars) displayName = "…" + displayName.slice(-maxChars);
+    div.textContent = displayName;
+
+    if(tabs.length>1){
+      const closeBtn = document.createElement('span');
+      closeBtn.textContent = "×";
+      closeBtn.className='close-btn';
+      closeBtn.addEventListener('click', e=>{
+        e.stopPropagation();
+        if(confirm("Are you sure you want to close this tab?")) closeTab(index);
+      });
+      div.appendChild(closeBtn);
+    }
+
+    div.addEventListener('click',()=>switchTab(index));
+    tabsContainer.appendChild(div);
+  });
+
+  if(tabs.length<MAX_TABS){
+    const addBtn = document.createElement('div');
+    addBtn.id='add-tab'; addBtn.textContent='+';
+    addBtn.addEventListener('click', addNewTab);
+    tabsContainer.appendChild(addBtn);
   }
-});
-
-// File input
-uploadContainer.addEventListener('click', () => uploadInput.click());
-
-uploadInput.addEventListener('change', e => {
-  if (!e.target.files[0]) return;
-  handleFile(e.target.files[0]);
-});
-
-// Drag & drop
-uploadContainer.addEventListener('dragover', e => {
-  e.preventDefault();
-  uploadContainer.classList.add('dragover');
-});
-
-uploadContainer.addEventListener('dragleave', e => {
-  e.preventDefault();
-  uploadContainer.classList.remove('dragover');
-});
-
-uploadContainer.addEventListener('drop', e => {
-  e.preventDefault();
-  uploadContainer.classList.remove('dragover');
-  if (!e.dataTransfer.files[0]) return;
-  handleFile(e.dataTransfer.files[0]);
-});
-
-function handleFile(file) {
-  if (!file.type.startsWith('image/jpeg')) return alert('Only JPG/JPEG images are supported.');
-  currentFilename = file.name;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const dataUrl = e.target.result;
-    loadImage(dataUrl, []);
-    localStorage.setItem('imageData', dataUrl);
-    localStorage.setItem('filename', currentFilename);
-    localStorage.removeItem('markers');
-  };
-  reader.readAsDataURL(file);
 }
 
-function loadImage(src, savedMarkers) {
-  imageContainer.innerHTML = '';
-  image = document.createElement('img');
-  image.src = src;
-  imageContainer.appendChild(image);
+function switchTab(index){ activeTabIndex=index; loadTab(index); renderTabs(); }
+function addNewTab(){ tabs.push({filename:"", imageData:"", markers:[]}); activeTabIndex=tabs.length-1; renderTabs(); loadTab(activeTabIndex); saveTabs(); }
+function closeTab(index){ tabs.splice(index,1); if(activeTabIndex>=tabs.length) activeTabIndex=tabs.length-1; renderTabs(); loadTab(activeTabIndex); saveTabs(); }
 
-  // Re-add counter
-  imageContainer.appendChild(counter);
-
-  markers = savedMarkers || [];
-  markers.forEach(m => addMarkerToDOM(m));
-  updateCounter();
-  updateFilename();
-}
-
-function getRelativeClick(e) {
-  const rect = image.getBoundingClientRect();
-  const x = ((e.clientX - rect.left) / rect.width).toFixed(4);
-  const y = ((e.clientY - rect.top) / rect.height).toFixed(4);
-  return { x, y };
+// ------------------- IMAGE & MARKERS -------------------
+function loadTab(index){
+  const tab = tabs[index];
+  imageContainer.innerHTML='';
+  counter.textContent=`Plaques: ${tab.markers.length}`;
+  filenameDisplay.textContent = tab.filename || "";
+  if(tab.imageData){
+    const img = document.createElement('img');
+    img.src=tab.imageData;
+    imageContainer.appendChild(img);
+    imageContainer.appendChild(counter);
+    tab.markers.forEach(marker=>addMarkerToDOM(marker));
+  }
 }
 
 // Add marker
-imageContainer.addEventListener('click', e => {
-  if (!image) return;
-  if (e.target.classList.contains('marker')) return;
-
-  const { x, y } = getRelativeClick(e);
-  if (markers.some(m => m.x === x && m.y === y)) return;
-
-  const marker = { x, y };
-  markers.push(marker);
+imageContainer.addEventListener('click', e=>{
+  const img=imageContainer.querySelector('img');
+  if(!img || e.target.classList.contains('marker')) return;
+  const rect = img.getBoundingClientRect();
+  const x = ((e.clientX-rect.left)/rect.width).toFixed(4);
+  const y = ((e.clientY-rect.top)/rect.height).toFixed(4);
+  const tab = tabs[activeTabIndex];
+  if(tab.markers.some(m=>m.x===x && m.y===y)) return;
+  const marker = {x,y};
+  tab.markers.push(marker);
   addMarkerToDOM(marker);
   updateCounter();
-  saveMarkers();
+  saveTabs();
 });
 
-function addMarkerToDOM(marker) {
-  const dot = document.createElement('div');
+function addMarkerToDOM(marker){
+  const dot=document.createElement('div');
   dot.classList.add('marker');
-  dot.style.left = `${marker.x * 100}%`;
-  dot.style.top = `${marker.y * 100}%`;
-
-  dot.addEventListener('click', e => {
+  dot.style.left=`${marker.x*100}%`;
+  dot.style.top=`${marker.y*100}%`;
+  dot.addEventListener('click', e=>{
     e.stopPropagation();
-    const index = markers.indexOf(marker);
-    setActive(index);
+    activeMarkerIndex=tabs[activeTabIndex].markers.indexOf(marker);
+    setActiveMarker(activeMarkerIndex);
   });
-
   imageContainer.appendChild(dot);
 }
 
-function setActive(index) {
-  activeIndex = index;
-  const dots = document.querySelectorAll('.marker');
-  dots.forEach((dot, i) => {
-    dot.style.border = i === index ? '1px solid yellow' : '1px solid white';
-    dot.style.transform = i === index ? 'translate(-50%, -50%) scale(2)' : 'translate(-50%, -50%) scale(1)';
+function setActiveMarker(index){
+  activeMarkerIndex=index;
+  const dots=document.querySelectorAll('.marker');
+  dots.forEach((dot,i)=>{
+    dot.style.border = i===index?"1px solid yellow":"1px solid white";
+    dot.style.transform = i===index?"translate(-50%,-50%) scale(2)":"translate(-50%,-50%) scale(1)";
   });
 }
 
-// Delete selected marker with DEL or Backspace
-document.addEventListener('keydown', e => {
-  if ((e.key === 'Delete' || e.key === 'Backspace') && activeIndex !== null) {
-    markers.splice(activeIndex, 1);
+document.addEventListener('keydown', e=>{
+  if(!["Delete","Backspace"].includes(e.key)) return;
+  const tab = tabs[activeTabIndex];
+  if(activeMarkerIndex!==null && tab.markers[activeMarkerIndex]){
+    tab.markers.splice(activeMarkerIndex,1);
     refreshMarkers();
+    saveTabs();
   }
 });
 
-function refreshMarkers() {
-  imageContainer.querySelectorAll('.marker').forEach(dot => dot.remove());
-  markers.forEach(m => addMarkerToDOM(m));
-  activeIndex = null;
+function refreshMarkers(){
+  imageContainer.querySelectorAll('.marker').forEach(d=>d.remove());
+  tabs[activeTabIndex].markers.forEach(marker=>addMarkerToDOM(marker));
+  activeMarkerIndex=null;
   updateCounter();
-  saveMarkers();
 }
 
-function updateCounter() {
-  counter.textContent = `Plaques: ${markers.length}`;
-}
+function updateCounter(){ counter.textContent=`Plaques: ${tabs[activeTabIndex].markers.length}`; }
 
-function updateFilename() {
-  filenameDisplay.textContent = currentFilename || "";
-}
+// ------------------- UPLOAD -------------------
+uploadContainer.addEventListener('click',()=>uploadInput.click());
+uploadInput.addEventListener('change', e=>handleFile(e.target.files[0]));
+uploadContainer.addEventListener('dragover', e=>{ e.preventDefault(); uploadContainer.classList.add('dragover'); });
+uploadContainer.addEventListener('dragleave', e=>{ e.preventDefault(); uploadContainer.classList.remove('dragover'); });
+uploadContainer.addEventListener('drop', e=>{ e.preventDefault(); uploadContainer.classList.remove('dragover'); handleFile(e.dataTransfer.files[0]); });
 
-function saveMarkers() {
-  localStorage.setItem('markers', JSON.stringify(markers));
+function handleFile(file){
+  if(!file || !file.type.startsWith('image/jpeg')) return alert('Only JPG/JPEG images allowed');
+  const reader = new FileReader();
+  reader.onload = e=>{
+    const tab = tabs[activeTabIndex];
+    tab.imageData = e.target.result;
+    tab.filename = file.name;
+    tab.markers = [];
+    loadTab(activeTabIndex);
+    renderTabs();
+    saveTabs();
+  }
+  reader.readAsDataURL(file);
 }
 </script>
+
 </body>
 </html>
