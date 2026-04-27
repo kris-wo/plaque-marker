@@ -3,31 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Merlin & Kristinas fancy plaque marker</title>
+<title>Plaque marker</title>
+<link href="https://fonts.cdnfonts.com/css/helvetica-neue-55" rel="stylesheet">
 <style>
 body {
-  font-family: Arial, sans-serif;
+ font-family: 'Helvetica Neue', sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  background: #f5f5f5;
+  background: #fff;
 }
 
 /* Header */
 .header { text-align: center; margin-bottom: 10px; 
-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+font-family: 'Helvetica Neue', sans-serif;
 
 
 }
-.subtitle { font-size: 18px; color: #666; 
-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+.subtitle { font-size: 16px; color: #000; 
+font-family: 'Helvetica Neue', sans-serif;
+font-weight: bold;
 }
-.main-title { font-size: 32px; font-weight: bold; margin: 2px 0 10px 0; color: #333; }
+.main-title { 
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 40px; font-weight: 200; margin: 2px 0 10px 0; color: #333; }
 
 /* Tabs */
 #tabs { display: flex; align-items: center; margin-bottom: 10px; width: 100%; max-width: 800px; overflow: hidden; }
 .tab {
+  font-family: 'Helvetica Neue', sans-serif;
   position: relative;
   flex-grow: 1; flex-basis: 0;
   text-align: center;
@@ -43,7 +48,7 @@ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   transition: background 0.2s;
   height: 18px;
 }
-.tab.active { background: #fff; font-weight: bold;  }
+.tab.active { background: #fff;  font-family: 'Helvetica Neue', sans-serif;}
 .tab .close-btn {
   display: none;
   position: absolute; top: 50%; right: 6px;
@@ -58,17 +63,18 @@ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 .tab:hover .close-btn { display: inline-block; }
 
-#add-tab { padding: 6px 12px; height: 20px; background: #bbb; border-radius: 6px; cursor: pointer; }
+#add-tab { padding: 6px 12px; height: 20px; background: #009999; border-radius: 6px; cursor: pointer; }
 
 /* Upload container */
 #upload-container {
+  font-family: 'Helvetica Neue', sans-serif;
   margin-bottom: 10px;
   width: 90vw; max-width: 600px;
   text-align: center;
   padding: 12px;
   border: 2px dashed #ccc;
   border-radius: 10px;
-  background: #fafafa;
+  background: #e5f2ee;
   transition: background 0.2s, border-color 0.2s;
   cursor: pointer;
 }
@@ -76,6 +82,7 @@ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
 /* Image container */
 #image-container {
+  font-family: 'Helvetica Neue', sans-serif;
   position: relative;
   border: 2px solid #ccc;
   max-width: 90vw; max-height: 70vh;
@@ -86,6 +93,7 @@ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
 /* Counter */
 #counter {
+  font-family: 'Helvetica Neue', sans-serif;
   position: absolute;
   top: 5px; left: 5px;
   background: rgba(0,0,0,0.6);
@@ -119,8 +127,8 @@ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 <body>
 
 <div class="header">
-  <div class="subtitle">Merlin's and Kristina's</div>
-  <div class="main-title">Fancy Plaque Marker</div>
+  <div class="subtitle">AG BURSE</div>
+  <div class="main-title">Plaque Marker</div>
 </div>
 
 <div id="tabs"></div>
